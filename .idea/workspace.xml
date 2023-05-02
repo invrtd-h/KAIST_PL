@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/ex3.sc" beforeDir="false" afterPath="$PROJECT_DIR$/src/ex3.sc" afterDir="false" />
+    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="chap3">
+      <change afterPath="$PROJECT_DIR$/src/chap4.sc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/chap5.sc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ex4.sc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +32,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
@@ -55,6 +61,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "Console",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -66,8 +73,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1683006111066</updated>
-      <workItem from="1683006112094" duration="1990000" />
+      <workItem from="1683006112094" duration="9073000" />
     </task>
+    <task id="LOCAL-00001" summary="chap3">
+      <created>1683011858495</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1683011858495</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -75,8 +90,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="chap3" />
+    <option name="LAST_COMMIT_MESSAGE" value="chap3" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
