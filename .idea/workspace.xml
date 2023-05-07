@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="chap3">
-      <change afterPath="$PROJECT_DIR$/src/chap4.sc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/chap5.sc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ex4.sc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="chap4, chap5" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,7 +68,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1683006111066</updated>
-      <workItem from="1683006112094" duration="9073000" />
+      <workItem from="1683006112094" duration="9932000" />
     </task>
     <task id="LOCAL-00001" summary="chap3">
       <created>1683011858495</created>
@@ -82,7 +77,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683011858495</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="chap4, chap5">
+      <created>1683032420920</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1683032420920</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -91,7 +93,8 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="chap3" />
-    <option name="LAST_COMMIT_MESSAGE" value="chap3" />
+    <MESSAGE value="chap4, chap5" />
+    <option name="LAST_COMMIT_MESSAGE" value="chap4, chap5" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
