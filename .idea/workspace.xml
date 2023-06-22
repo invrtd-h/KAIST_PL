@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="chap7">
-      <change afterPath="$PROJECT_DIR$/src/ex8.sc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ex9.sc" afterDir="false" />
+    <list default="true" id="54a1f6d9-50d8-427d-a2c9-77ab9079185a" name="Changes" comment="9.4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ex9.sc" beforeDir="false" afterPath="$PROJECT_DIR$/src/ex9.sc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +81,7 @@
       <workItem from="1683035419279" duration="12140000" />
       <workItem from="1683805566068" duration="598000" />
       <workItem from="1684236387406" duration="598000" />
-      <workItem from="1687415730968" duration="2094000" />
+      <workItem from="1687415730968" duration="5128000" />
     </task>
     <task id="LOCAL-00001" summary="chap3">
       <created>1683011858495</created>
@@ -105,7 +104,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683450688793</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="9.4">
+      <created>1687419750152</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1687419750152</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -116,7 +122,8 @@
     <MESSAGE value="chap3" />
     <MESSAGE value="chap4, chap5" />
     <MESSAGE value="chap7" />
-    <option name="LAST_COMMIT_MESSAGE" value="chap7" />
+    <MESSAGE value="9.4" />
+    <option name="LAST_COMMIT_MESSAGE" value="9.4" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
