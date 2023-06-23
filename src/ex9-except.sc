@@ -72,3 +72,13 @@ val myEnv: Env = Map()
   val myErr: Expr = App(Fun("x", Add(Id("x"), Id("y"))), Num(1))
   pret(myErr, myEnv)
 }
+
+{
+  val myErr: Expr = Add(Num(1), Id("x"))
+  pret(myErr, myEnv)
+}
+
+{
+  val myErr: Expr = Add(Num(1), Fun("x", Id("x")))
+  pret(myErr, myEnv)
+}
