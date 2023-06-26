@@ -4,6 +4,7 @@ case class Num(num: Int) extends Expr
 case class Add(lhs: Expr, rhs: Expr) extends Expr
 case class Sub(lhs: Expr, rhs: Expr) extends Expr
 case class Id(id: String) extends Expr
+case class Var(varName: String, init: Expr, nextExpr: Expr) extends Expr
 case class Fun(argName: String, expr: Expr) extends Expr
 case class App(f: Expr, arg: Expr) extends Expr
 case class SetVar(varName: String, expr: Expr) extends Expr
@@ -16,7 +17,7 @@ type Env = Map[String, Addr]
 type Store = Map[Addr, Value]
 
 case class NumV(num: Int) extends Value
-case class CloV(varName: String, expr: Expr, var env: Env) extends Value
+case class CloV(varName: String, expr: Expr, env: Env) extends Value
 case class Err(errDoc: String) extends Value
 
 def pret(expr: Expr, env: Env, store: Store): (Value, Store) =
@@ -24,6 +25,14 @@ def pret(expr: Expr, env: Env, store: Store): (Value, Store) =
     case Num(num) => (NumV(num), store)
     case Id(id) => (store(env(id)), store)
     case Fun(argName, expr) => (CloV(argName, expr, env), store)
+    case Var(varName, init, nextExpr) =>
+      val (initVal, sto1) = pret(init, env, store)
+      initVal match {
+        case Err(errDoc) => (Err(errDoc), sto1)
+        case _ =>
+          val addr = sto1.keys.maxOption.getOrElse(0) + 1
+          pret(nextExpr, env + (varName -> addr), sto1 + (addr -> initVal))
+      }
 
     case Add(lhs, rhs) =>
       val (lVal, sto1) = pret(lhs, env, store)
@@ -85,4 +94,29 @@ def pret(expr: Expr, env: Env, store: Store): (Value, Store) =
             case None => (Err("variable name not defined ### varName=%s not in env=%s".format(varName, env)), sto1)
           }
       }
+    case Seq(lhs, rhs) =>
+      val (lhsVal, sto1) = pret(lhs, env, store)
+      lhsVal match {
+        case Err(errDoc) => (Err(errDoc), sto1)
+        case _ => pret(rhs, env, sto1)
+      }
   }
+
+// 12.1
+val myEnv: Env = Map()
+val myStore: Store = Map()
+
+{
+  val myVal = App(Fun("x", Id("x")), App(Fun("x", Id("x")), Num(1)))
+  pret(myVal, myEnv, myStore)
+}
+
+{
+  val myVal = Var("x", Num(1), Id("x"))
+  pret(myVal, myEnv, myStore)
+}
+
+{
+  val myVal = Var("x", Num(1), SetVar("x", Num(2)))
+  pret(myVal, myEnv, myStore)
+}
