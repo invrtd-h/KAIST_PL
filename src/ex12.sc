@@ -3,6 +3,7 @@ sealed trait Expr
 case class Num(num: Int) extends Expr
 case class Add(lhs: Expr, rhs: Expr) extends Expr
 case class Sub(lhs: Expr, rhs: Expr) extends Expr
+case class If0(condition: Expr, exprTrue: Expr, exprFalse: Expr) extends Expr
 case class Id(id: String) extends Expr
 case class Var(varName: String, init: Expr, nextExpr: Expr) extends Expr
 case class Fun(argName: String, expr: Expr) extends Expr
@@ -60,6 +61,15 @@ def pret(expr: Expr, env: Env, store: Store): (Value, Store) =
         case Err(errDoc) => (Err(errDoc), sto1)
         case _ => (Err("Sub arg not a number ### lhs=%s evaluated %s".format(lhs, lVal)), sto1)
       }
+    case If0(condition, exprTrue, exprFalse) =>
+      val (condVal, sto1) = pret(condition, env, store)
+      condVal match {
+        case NumV(n) =>
+          if (n == 0) pret(exprTrue, env, sto1) else pret(exprFalse, env, sto1)
+        case Err(errDoc) => (Err(errDoc), sto1)
+        case _ => (Err("If stmt condition not number ### cond=%s evaluated %s".format(condition, condVal)), sto1)
+      }
+
     case App(f, arg) =>
       val (fVal, sto1) = pret(f, env, store)
       fVal match {
@@ -118,5 +128,10 @@ val myStore: Store = Map()
 
 {
   val myVal = Var("x", Num(1), SetVar("x", Num(2)))
+  pret(myVal, myEnv, myStore)
+}
+
+{
+  val myVal = Var("f", Fun("x", If0(Id("x"), Num(0), Add(App(Id("f"), Sub(Id("x"), Num(1))), Id("x")))), App(Id("f"), Num(10)))
   pret(myVal, myEnv, myStore)
 }
