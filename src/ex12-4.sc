@@ -177,3 +177,8 @@ val myStore: Store = Map()
   val myVal = Var("x", Num(1), Ref("x"))
   pret(myVal, myEnv, myStore)
 }
+
+{
+  val myVal = Var("x", Num(1), Deref(Ref("x")))
+  pret(myVal, myEnv, myStore)
+}
