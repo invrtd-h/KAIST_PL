@@ -1,32 +1,37 @@
 import scala.language.postfixOps
 
-sealed trait Expr {
-  def +(rhs: Expr) = Add(this, rhs)
-  def plus(rhs: Expr) = Add(this, rhs)
-  def -(rhs: Expr) = Sub(this, rhs)
-  def minus(rhs: Expr) = Sub(this, rhs)
+object myMain {
+  sealed trait Expr {
+    def +(rhs: Expr): Expr = Add(this, rhs)
+    def plus(rhs: Expr): Expr = Add(this, rhs)
+    def -(rhs: Expr): Expr = Sub(this, rhs)
+    def minus(rhs: Expr): Expr = Sub(this, rhs)
+    def <|(arg: Expr): Expr = App(this, arg)
+    def apply(arg: Expr): Expr = App(this, arg)
+    def _1: Expr = First(this)
+    def _2: Expr = Second(this)
+  }
 
-  def <|(arg: Expr) = App(this, arg)
-  def apply(arg: Expr) = App(this, arg)
-}
+  case class Num(num: Int) extends Expr
+  case class Add(lhs: Expr, rhs: Expr) extends Expr
+  case class Sub(lhs: Expr, rhs: Expr) extends Expr
+  case class If0(cond: Expr, trueExpr: Expr, falseExpr: Expr) extends Expr
+  case class Val(id: String, init: Expr, nextExpr: Expr) extends Expr
+  case class Id(id: String) extends Expr
+  case class Fun(argName: String, expr: Expr) extends Expr
+  case class App(f: Expr, arg: Expr) extends Expr
+  case class Pair(first: Expr, second: Expr) extends Expr
+  case class First(pair: Expr) extends Expr
+  case class Second(pair: Expr) extends Expr
 
-case class Num(num: Int) extends Expr
-case class Add(lhs: Expr, rhs: Expr) extends Expr
-case class Sub(lhs: Expr, rhs: Expr) extends Expr
-case class If0(cond: Expr, trueExpr: Expr, falseExpr: Expr) extends Expr
-case class Val(id: String, init: Expr, nextExpr: Expr) extends Expr
-case class Id(id: String) extends Expr
-case class Fun(argName: String, expr: Expr) extends Expr
-case class App(f: Expr, arg: Expr) extends Expr
+  sealed trait Value
+  type Env = Map[String, Value]
 
-sealed trait Value
-type Env = Map[String, Value]
+  case class NumV(num: Int) extends Value
+  case class PairV(first: Value, second: Value) extends Value
+  case class CloV(argName: String, expr: Expr, env: Env) extends Value
+  case class ExprV(expr: Expr, env: Env, var cache: Option[Value]) extends Value
 
-case class NumV(num: Int) extends Value
-case class CloV(argName: String, expr: Expr, env: Env) extends Value
-case class ExprV(expr: Expr, env: Env, var cache: Option[Value]) extends Value
-
-object wrapper {
   private def force(value: Value): Value = value match {
     case ExprV(_, _, Some(cache)) => cache
     case exprV@ExprV(e, env, None) =>
@@ -64,13 +69,21 @@ object wrapper {
       case App(f, arg) =>
         val CloV(argName, expr, fEnv) = force(pret(f, env))
         pret(expr, fEnv + (argName -> ExprV(arg, env, None)))
+      case Pair(first, second) =>
+        PairV(ExprV(first, env, None), ExprV(second, env, None))
+      case First(pair) =>
+        val Pair(first, _) = pair
+        force(pret(first, env))
+      case Second(pair) =>
+        val Pair(_, second) = pair
+        force(pret(second, env))
     }
     println("ret: %s".format(expr, ret))
     ret
   }
 }
 
-import wrapper._
+import myMain._
 
 def pret0(expr: Expr): Value = pret(expr, Map())
 
@@ -87,7 +100,7 @@ object sugar {
     def be(expr: Expr): Help = Help(id, expr)
 
     case class Help(id: String, init: Expr) {
-      def in(nextExpr: Expr) = Val(id, init, nextExpr)
+      def in(nextExpr: Expr): Expr = Val(id, init, nextExpr)
     }
   }
 }
@@ -148,3 +161,23 @@ val res1: Value = NumV(7)
 
 Note that the wrong function f is not evaluated.
  */
+
+try {
+  pret0 {
+    Pair(3.i, lambda("x", "x".id) + 4.i)
+  }
+} // no err throw
+
+try {
+  pret0 {
+    Pair(3.i, lambda("x", "x".id) + 4.i)._1 + 5.i
+  }
+} // no err throw
+
+try {
+  pret0 {
+    Pair(3.i, lambda("x", "x".id) + 4.i)._2 + 5.i
+  }
+} catch {
+  case e: Exception => e
+} // scala.MatchError incurs
