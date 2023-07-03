@@ -44,7 +44,6 @@ def pret(expr: Expr, env: Env): Value = expr match {
 }
 
 // 14.1
-
 /*
 
 calls pret((\x.x+x)(1+2))
@@ -62,5 +61,13 @@ evaluated x=ExprV(1+2)
 calls force(ExprV(1+2))
 evaluated 3
 Add(lhs=x, rhs=x) evaluated 6
+
+ */
+
+// 14.4
+/*
+
+We need an expr in the form of
+ExprV(ExprV(...))
 
  */
