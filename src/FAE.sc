@@ -2,7 +2,12 @@ import scala.language.postfixOps
 
 sealed trait Expr {
   def +(rhs: Expr) = Add(this, rhs)
+  def plus(rhs: Expr) = Add(this, rhs)
   def -(rhs: Expr) = Sub(this, rhs)
+  def minus(rhs: Expr) = Sub(this, rhs)
+
+  def <|(arg: Expr) = App(this, arg)
+  def apply(arg: Expr) = App(this, arg)
 }
 
 case class Num(num: Int) extends Expr
@@ -46,9 +51,32 @@ object sugar {
   implicit class IdSugar(id: String) {
     def id: Id = Id(id)
   }
+
+  implicit class ValSugar(id: String) {
+    def be(expr: Expr): Help = Help(id, expr)
+
+    case class Help(id: String, init: Expr) {
+      def in(nextExpr: Expr) = Val(id, init, nextExpr)
+    }
+  }
 }
 
 import sugar._
 
+val lambda = (tup: (String, Expr)) => Fun(tup._1, tup._2)
+
 pret(1.i + 3.i + 5.i - 2.i)
 
+pret{
+  "x" be 3.i in {
+    "y" be 8.i in {
+      "x".id + "y".id
+    }
+  }
+}
+
+pret{
+  "f" be lambda("x" -> ("x".id + 3.i)) in {
+    "f".id <| 4.i
+  }
+}
