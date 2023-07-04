@@ -1,4 +1,5 @@
 import scala.language.postfixOps
+import scala.sys.error
 
 object myMain {
   sealed trait Expr {
@@ -10,6 +11,9 @@ object myMain {
     def apply(arg: Expr): Expr = App(this, arg)
     def _1: Expr = First(this)
     def _2: Expr = Second(this)
+    def getHead: Expr = Head(this)
+    def getTail: Expr = Tail(this)
+    def ::(rhs: Expr): Expr = Cons(rhs, this)
   }
 
   case class Num(num: Int) extends Expr
@@ -23,16 +27,22 @@ object myMain {
   case class Pair(first: Expr, second: Expr) extends Expr
   case class First(pair: Expr) extends Expr
   case class Second(pair: Expr) extends Expr
+  case object NilE extends Expr
+  case class Cons(head: Expr, tail: Expr) extends Expr
+  case class Head(list: Expr) extends Expr
+  case class Tail(list: Expr) extends Expr
 
   sealed trait Value
   type Env = Map[String, Value]
 
   case class NumV(num: Int) extends Value
   case class PairV(first: Value, second: Value) extends Value
+  case object NilV extends Value
+  case class ConsV(head: Value, tail: Value) extends Value
   case class CloV(argName: String, expr: Expr, env: Env) extends Value
   case class ExprV(expr: Expr, env: Env, var cache: Option[Value]) extends Value
 
-  private def force(value: Value): Value = value match {
+  def force(value: Value): Value = value match {
     case ExprV(_, _, Some(cache)) => cache
     case exprV@ExprV(e, env, None) =>
       val cache = force(pret(e, env))
@@ -77,8 +87,21 @@ object myMain {
       case Second(pair) =>
         val Pair(_, second) = pair
         force(pret(second, env))
+      case NilE => NilV
+      case Cons(head, tail) =>
+        ConsV(ExprV(head, env, None), pret(tail, env))
+      case Head(list) =>
+        val ConsV(headV, _): Value = force(pret(list, env))
+        force(headV)
+      case Tail(list) =>
+        val ConsV(_, tailV): Value = force(pret(list, env))
+        force(tailV) match {
+          case NilV => NilV
+          case ret@ConsV(_, _) => ret
+          case _ => error("Not a list")
+        }
     }
-    println("ret: %s".format(expr, ret))
+    println("ret: %s".format(ret))
     ret
   }
 }
@@ -109,6 +132,9 @@ import sugar._
 
 val lambda = (tup: (String, Expr)) => Fun(tup._1, tup._2)
 
+def fun(argName: String)(expr: Expr): Expr =
+  Fun(argName, expr)
+
 try {
   pret0 {
     lambda("y", "y".id.apply(3.i)).apply(
@@ -124,15 +150,15 @@ Execution result:
 
 expr: App(Fun(y,App(Id(y),Num(3))),Fun(x,App(Num(1),Num(2))))
 expr: Fun(y,App(Id(y),Num(3)))
-ret: Fun(y,App(Id(y),Num(3)))
+ret: CloV(y,App(Id(y),Num(3)),Map())
 expr: App(Id(y),Num(3))
 expr: Id(y)
-ret: Id(y)
+ret: ExprV(Fun(x,App(Num(1),Num(2))),Map(),None)
 expr: Fun(x,App(Num(1),Num(2)))
-ret: Fun(x,App(Num(1),Num(2)))
+ret: CloV(x,App(Num(1),Num(2)),Map())
 expr: App(Num(1),Num(2))
 expr: Num(1)
-ret: Num(1)
+ret: NumV(1)
 val res0: Object = scala.MatchError: NumV(1) (of class NumV)
  */
 
@@ -149,35 +175,63 @@ Execution result:
 
 expr: Val(f,Fun(x,Id(y)),Add(Num(3),Num(4)))
 expr: Fun(x,Id(y))
-ret: Fun(x,Id(y))
+ret: CloV(x,Id(y),Map())
 expr: Add(Num(3),Num(4))
 expr: Num(3)
-ret: Num(3)
+ret: NumV(3)
 expr: Num(4)
-ret: Num(4)
-ret: Add(Num(3),Num(4))
-ret: Val(f,Fun(x,Id(y)),Add(Num(3),Num(4)))
-val res1: Value = NumV(7)
+ret: NumV(4)
+ret: NumV(7)
+ret: NumV(7)
+val res1: myMain.Value = NumV(7)
 
 Note that the wrong function f is not evaluated.
  */
 
 try {
   pret0 {
-    Pair(3.i, lambda("x", "x".id) + 4.i)
+    Pair(3.i, lambda("x" -> "x".id) + 4.i)
   }
 } // no err throw
 
 try {
   pret0 {
-    Pair(3.i, lambda("x", "x".id) + 4.i)._1 + 5.i
+    Pair(3.i, lambda("x" -> "x".id) + 4.i)._1 + 5.i
   }
 } // no err throw
 
 try {
   pret0 {
-    Pair(3.i, lambda("x", "x".id) + 4.i)._2 + 5.i
+    Pair(3.i, lambda("x" -> "x".id) + 4.i)._2 + 5.i
   }
 } catch {
   case e: Exception => e
 } // scala.MatchError incurs
+
+try {
+  pret0 {
+    ((0.i + NilE) :: (2.i :: NilE)).getTail.getHead
+  }
+}
+
+try {
+  pret0 {
+    ((0.i + NilE) :: (2.i :: NilE)).getHead
+  }
+} catch {
+  case e: Exception => e
+}
+
+try {
+  pret0 {
+    (0.i :: 1.i).getHead
+  }
+}
+
+try {
+  pret0 {
+    (0.i :: 1.i).getTail
+  }
+} catch {
+  case e: Exception => e
+}
