@@ -9,6 +9,9 @@ object myMain {
     def minus(rhs: Expr): Expr = Sub(this, rhs)
     def <|(arg: Expr): Expr = App(this, arg)
     def apply(arg: Expr): Expr = App(this, arg)
+    def delay: Expr = Delay(this)
+    def laz: Expr = Lazy(this)
+    def force: Expr = Force(this)
   }
 
   case class Num(num: Int) extends Expr
@@ -18,12 +21,31 @@ object myMain {
   case class Id(id: String) extends Expr
   case class Fun(argName: String, expr: Expr) extends Expr
   case class App(f: Expr, arg: Expr) extends Expr
+  case class Delay(expr: Expr) extends Expr
+  case class Lazy(expr: Expr) extends Expr
+  case class Force(expr: Expr) extends Expr
 
   sealed trait Value
   type Env = Map[String, Value]
 
   case class NumV(num: Int) extends Value
   case class CloV(argName: String, expr: Expr, env: Env) extends Value
+  case class DelayV(expr: Expr, env: Env, var cache: Option[Value]) extends Value
+  case class LazyV(expr: Expr, env: Env, var cache: Option[Value]) extends Value
+
+  def force(value: Value): Value = value match {
+    case DelayV(_, _, Some(cache)) => cache
+    case delayV@DelayV(expr, env, _) =>
+      val cache = pret(expr, env)
+      delayV.cache = Some(cache)
+      cache
+    case LazyV(_, _, Some(cache)) => cache
+    case lazyV@LazyV(expr, env, _) =>
+      val cache = force(pret(expr, env))
+      lazyV.cache = Some(cache)
+      cache
+    case _ => value
+  }
 
   def pret(expr: Expr, env: Env): Value = {
     println("expr: %s".format(expr))
@@ -44,6 +66,9 @@ object myMain {
       case App(f, arg) =>
         val CloV(argName, expr, fEnv) = pret(f, env)
         pret(expr, fEnv + (argName -> pret(arg, env)))
+      case Delay(dExpr) => DelayV(dExpr, env, None)
+      case Lazy(lExpr) => LazyV(lExpr, env, None)
+      case Force(fExpr) => force(pret(fExpr, env))
     }
     println("ret: %s".format(ret))
     ret

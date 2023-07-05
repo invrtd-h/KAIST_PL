@@ -234,4 +234,4 @@ try {
   }
 } catch {
   case e: Exception => e
-}
+} // NOT A LIST error occurs
