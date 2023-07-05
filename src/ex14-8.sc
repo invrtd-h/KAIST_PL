@@ -104,3 +104,4 @@ val lambda = (tup: (String, Expr)) => Fun(tup._1, tup._2)
 def fun(argName: String)(expr: Expr): Expr =
   Fun(argName, expr)
 
+// TODO write a test code
